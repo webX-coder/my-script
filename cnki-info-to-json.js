@@ -3,7 +3,7 @@
 // @namespace   script
 // @match       https://kns.cnki.net/kcms/detail/detail.aspx
 // @license     MIT
-// @version     1.2
+// @version     1.3
 // @author      Ybond
 // @grant       GM_notification
 // @grant       GM_setClipboard
@@ -76,21 +76,6 @@ function getDetail() {
     // });
 
 
-}
-
-//赋值字符串到剪切板
-function copy(data) {
-    let transfer = document.createElement('input');
-    document.body.appendChild(transfer);
-    transfer.value = data;  // 这里表示想要复制的内容
-    transfer.focus();
-    transfer.select();
-    if (document.execCommand('copy')) {
-        document.execCommand('copy');
-    }
-    transfer.blur();
-    // console.log('复制成功');
-    document.body.removeChild(transfer);
 }
 
 /** 删除空格 */
@@ -187,15 +172,15 @@ function parseMenu(str) {
             if (/^\S/.test(line)) {
                 $level1_key = i;
                 result[$level1_key] = {
-                    label: line,
+                    text: line,
                     children: [],
                 };
             }
 
             //二级菜单
             if (/^\s/.test(line) && result[$level1_key]) {
-                result[$level1_key]["text"].push({
-                    label: line.trim(),
+                result[$level1_key]["children"].push({
+                    text: line.trim(),
                     children: [],
                 });
             }

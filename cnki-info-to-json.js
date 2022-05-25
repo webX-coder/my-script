@@ -2,7 +2,8 @@
 // @name        知网页面信息转JSON
 // @namespace   script
 // @match       https://kns.cnki.net/kcms/detail/detail.aspx
-// @version     1.0
+// @license     MIT
+// @version     1.1
 // @author      Ybond
 // @grant       GM_notification
 // @grant       GM_setClipboard
@@ -11,20 +12,19 @@
 // @updateURL   https://raw.githubusercontent.com/ybd0612/my-script/master/cnki-info-to-json.js
 // @downloadURL https://raw.githubusercontent.com/ybd0612/my-script/master/cnki-info-to-json.js
 // ==/UserScript==
-(function () {
-
 initButton();
 
 /** 创建按钮 */
 function initButton() {
-    $("body").append("<button class='cjwk_btn'>按钮</button>");
+    $("body").append("<button class='cjwk_btn'>复制json</button>");
     $('.cjwk_btn').css({
         "position": "fixed",
         "top": "100px",
         "right": "15px",
         "background": "red",
-        "line-height": "30px",
-        "font-size": "30px"
+        "line-height": "20px",
+        "font-size": "20px",
+        "z-index": "99"
     });
 }
 
@@ -241,4 +241,3 @@ function getAuthors() {
     }
     return authors;
 }
-});

@@ -8,11 +8,12 @@
 // @grant       GM_setClipboard
 // @require     https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/jquery/3.6.0/jquery.min.js
 // @description 把页面上的部分信息抽取成JSON并放入剪切板
-// @updateURL
-// @downloadURL
+// @updateURL   https://raw.githubusercontent.com/ybd0612/my-script/master/cnki-info-to-json.js
+// @downloadURL https://raw.githubusercontent.com/ybd0612/my-script/master/cnki-info-to-json.js
 // ==/UserScript==
-initButton();
+(function () {
 
+initButton();
 
 /** 创建按钮 */
 function initButton() {
@@ -240,3 +241,4 @@ function getAuthors() {
     }
     return authors;
 }
+});

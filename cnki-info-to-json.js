@@ -3,7 +3,7 @@
 // @namespace   script
 // @match       https://kns.cnki.net/kcms/detail/detail.aspx
 // @license     MIT
-// @version     1.1
+// @version     1.2
 // @author      Ybond
 // @grant       GM_notification
 // @grant       GM_setClipboard
@@ -37,27 +37,30 @@ let items = [];
 /** 获取详情 */
 function getDetail() {
     let data = {};
+    data.data = {};
+
 
     // 获取标题
-    data.title = $(".wx-tit>h1").text();
+    data.data.articles = {};
+    data.data.articles.title = $(".wx-tit>h1").text();
 
     // 获取作者及单位
-    data.authors = getAuthors();
+    data.data.articlesAuthors = getAuthors();
 
     // 获取摘要
-    data.summary = $("#ChDivSummary").text();
+    data.data.articles.summary = $("#ChDivSummary").text();
 
     // 获取关键词
-    data.keyword = handleStr($(".keywords").text());
+    data.data.articles.keywords = handleStr($(".keywords").text());
 
     // 获取基金项目
-    data.funds = handleStr($(".funds").text());
+    data.data.articles.fund = handleStr($(".funds").text());
 
     // 获取分类号
-    data.clc = getClc();
+    data.data.clcs = getClc();
 
     // 获取目录
-    data.menus = getMenus();
+    data.data.menus = getMenus();
 
     GM_setClipboard(JSON.stringify(data), 'text');
     GM_notification("信息获取成功,已复制");
@@ -92,7 +95,7 @@ function copy(data) {
 
 /** 删除空格 */
 function handleStr(str) {
-    return str.replace(/\s+/mg, "").replace(/；/mg,";");
+    return str.replace(/\s+/mg, "").replace(/；/mg, ";");
 };
 
 /** 获取参考文献 */
@@ -165,6 +168,48 @@ function flagNext(lindex) {
     return false;
 }
 
+//目录解析
+function parseMenu(str) {
+    let arr = str.split(/[\r\n]+/);
+    let result = [];
+    let result_ = [];
+    let isNew = false;
+    let name = "";
+    let children = [];
+    let $level1_key = 0;
+
+    for (let i = 0, len_i = arr.length; i < len_i; i++) {
+        let line = arr[i];
+
+        //非空白行才进
+        if (/\S/.test(line)) {
+            //一级菜单
+            if (/^\S/.test(line)) {
+                $level1_key = i;
+                result[$level1_key] = {
+                    label: line,
+                    children: [],
+                };
+            }
+
+            //二级菜单
+            if (/^\s/.test(line) && result[$level1_key]) {
+                result[$level1_key]["text"].push({
+                    label: line.trim(),
+                    children: [],
+                });
+            }
+        }
+    }
+
+    for (let i = 0, len_i = result.length; i < len_i; i++) {
+        if (result[i] !== undefined) {
+            result_.push(result[i]);
+        }
+    }
+    return result_;
+}
+
 /** 获取目录 */
 function getMenus() {
     let mns = $(".catalog-list>li");
@@ -174,20 +219,31 @@ function getMenus() {
         let eleText = $(element).text();
         res += eleText + "\r\n";
     }
-    return res;
+    return parseMenu(res);
 }
 
 /** 获取分类号 */
 function getClc() {
     let rows = $(".top-space>.rowtit");
     var clcreg = /^分类号[:：]/m;
+    let clcCode = "";
     for (let index = 0; index < rows.length; index++) {
         const element = rows[index];
         let eleText = $(element).text();
         if (clcreg.test(eleText)) {
-            return $(element).parent().find("p").text();
+            clcCode = $(element).parent().find("p").text();
+            break;
         }
     }
+    let res = [];
+    let clcs = clcCode.split(";");
+    for (let index = 0; index < clcs.length; index++) {
+        const element = clcs[index];
+        res.push({
+            "clcCode": element
+        });
+    }
+    return res;
 }
 
 /** 获取作者及单位信息 */

@@ -3,7 +3,7 @@
 // @namespace   script
 // @match       https://kns.cnki.net/kcms/detail/detail.aspx
 // @license     MIT
-// @version     1.3
+// @version     1.4
 // @author      Ybond
 // @grant       GM_notification
 // @grant       GM_setClipboard
@@ -16,15 +16,36 @@ initButton();
 
 /** 创建按钮 */
 function initButton() {
-    $("body").append("<button class='cjwk_btn'>复制json</button>");
+    $("body").append("<button class='cjwk_btn'>复制数据</button>");
     $('.cjwk_btn').css({
         "position": "fixed",
         "top": "100px",
-        "right": "15px",
-        "background": "red",
-        "line-height": "20px",
-        "font-size": "20px",
-        "z-index": "99"
+        "right": "2%",
+        "z-index": "99",
+        "background-color":"#f98c51",
+        "display":"inline-block",
+        "width":"110px",
+        "height":"32px",
+        "font-size":"14px",
+        "text-indent":"0",
+        "text-align":"center",
+        "color":"#fff",
+        "line-height":"32px",
+        "font-family":"Microsoft Yahei,serif",
+        "border-radius":"4px",
+        "overflow":"visible",
+        "background-color":"#f98c51",
+        "display":"inline-block",
+        "width":"110px",
+        "height":"32px",
+        "font-size":"14px",
+        "text-indent":"0",
+        "text-align":"center",
+        "color":"#fff",
+        "line-height":"32px",
+        "font-family":"Microsoft Yahei,serif",
+        "border-radius":"4px",
+        "overflow":"visible"
     });
 }
 

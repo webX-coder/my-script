@@ -69,7 +69,7 @@ function getDetail() {
     data.data.articlesAuthors = getAuthors();
 
     // 获取摘要
-    data.data.articles.summary = $("#ChDivSummary").text();
+    data.data.articles.summary = g_Summary.ChDivSummary;
 
     // 获取关键词
     data.data.articles.keywords = getKeywords();

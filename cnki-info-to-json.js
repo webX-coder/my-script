@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name        知网页面信息转JSON
 // @namespace   script
-// @match       https://kns.cnki.net/kcms/detail/detail.aspx
+// @match       https://*.cnki.net/kcms/detail/**
 // @license     MIT
-// @version     1.4
+// @version     1.5
 // @author      Ybond
 // @grant       GM_notification
 // @grant       GM_setClipboard

@@ -72,7 +72,7 @@ function getDetail() {
     data.data.articles.summary = $("#ChDivSummary").text();
 
     // 获取关键词
-    data.data.articles.keywords = handleStr($(".keywords").text());
+    data.data.articles.keywords = getKeywords();
 
     // 获取基金项目
     data.data.articles.fund = handleStr($(".funds").text());
@@ -103,6 +103,14 @@ function getDetail() {
 function handleStr(str) {
     return str.replace(/\s+/mg, "").replace(/；/mg, ";");
 };
+
+/** 获取关键词 */
+function getKeywords(){
+    let keywords = handleStr($(".keywords").text());
+    if(keywords.endsWith(";")){
+        return keywords.slice(0,keywords.length-1);
+    }
+}
 
 /** 获取参考文献 */
 function getRefs() {

@@ -3,7 +3,7 @@
 // @namespace   script
 // @match       https://*.cnki.net/kcms/detail**
 // @license     MIT
-// @version     1.6
+// @version     1.7
 // @author      Ybond
 // @grant       GM_notification
 // @grant       GM_setClipboard
@@ -22,30 +22,30 @@ function initButton() {
         "top": "100px",
         "right": "2%",
         "z-index": "99",
-        "background-color":"#f98c51",
-        "display":"inline-block",
-        "width":"110px",
-        "height":"32px",
-        "font-size":"14px",
-        "text-indent":"0",
-        "text-align":"center",
-        "color":"#fff",
-        "line-height":"32px",
-        "font-family":"Microsoft Yahei,serif",
-        "border-radius":"4px",
-        "overflow":"visible",
-        "background-color":"#f98c51",
-        "display":"inline-block",
-        "width":"110px",
-        "height":"32px",
-        "font-size":"14px",
-        "text-indent":"0",
-        "text-align":"center",
-        "color":"#fff",
-        "line-height":"32px",
-        "font-family":"Microsoft Yahei,serif",
-        "border-radius":"4px",
-        "overflow":"visible"
+        "background-color": "#f98c51",
+        "display": "inline-block",
+        "width": "110px",
+        "height": "32px",
+        "font-size": "14px",
+        "text-indent": "0",
+        "text-align": "center",
+        "color": "#fff",
+        "line-height": "32px",
+        "font-family": "Microsoft Yahei,serif",
+        "border-radius": "4px",
+        "overflow": "visible",
+        "background-color": "#f98c51",
+        "display": "inline-block",
+        "width": "110px",
+        "height": "32px",
+        "font-size": "14px",
+        "text-indent": "0",
+        "text-align": "center",
+        "color": "#fff",
+        "line-height": "32px",
+        "font-family": "Microsoft Yahei,serif",
+        "border-radius": "4px",
+        "overflow": "visible"
     });
 }
 
@@ -85,104 +85,23 @@ function getDetail() {
 
     GM_setClipboard(JSON.stringify(data), 'text');
     GM_notification("信息获取成功,已复制");
-    // copy();
-
-    // 获取参考文献(先不搞)
-    // items = [];
-    // items[0] = [];
-    // items[1] = [];
-    // items[2] = [];
-    // getRefs().then((data) => {
-    //     console.log(data);
-    // });
-
 
 }
 
-/** 删除空格 */
+/** 删除空格,并替换分号 */
 function handleStr(str) {
     return str.replace(/\s+/mg, "").replace(/；/mg, ";");
 };
 
 /** 获取关键词 */
-function getKeywords(){
+function getKeywords() {
     let keywords = handleStr($(".keywords").text());
-    if(keywords.endsWith(";")){
-        return keywords.slice(0,keywords.length-1);
+    if (keywords.endsWith(";")) {
+        return keywords.slice(0, keywords.length - 1);
     }
 }
 
-/** 获取参考文献 */
-function getRefs() {
-    return new Promise(res => {
-        let lis = $(".module-tab>li");
-        for (let index = 0; index < lis.length; index++) {
-            const element = lis[index];
-            if ($(element).text() == "参考文献") {
-                // if (!$(element).hasClass("cur")) {
-                $(element).click();
-                let to1 = setTimeout(() => {
-                    clearTimeout(to1);
-                    getRefList().then(() => {
-                        res(items);
-                    });
-                }, 1000);
-                // }
-
-            }
-        }
-    })
-}
-
-/** 获取三种参考文献 */
-async function getRefList() {
-    await getRefPage(0);
-    await getRefPage(1);
-    await getRefPage(2);
-}
-
-// 需要递归的函数
-function getRefPage(lindex) {
-    return new Promise((resolve) => {
-        let ti = setInterval(() => {
-            let count = $(document.querySelector('#frame1').contentWindow.document).find(".essayBox:eq(" + lindex + ")>.ebBd>li").length;
-            if (count > 0) {
-                clearInterval(ti);
-                let data = $(document.querySelector('#frame1').contentWindow.document).find(".essayBox:eq(" + lindex + ")>.ebBd>li");
-                for (let index = 0; index < data.length; index++) {
-                    const element = data[index];
-                    items[lindex].push($(element).text());
-                }
-            }
-            return resolve();
-        }, 100);
-        if (flagNext(lindex)) {
-            let to1 = setTimeout(() => {
-                clearTimeout(to1);
-                return getRefPage(lindex);
-            }, 1000);
-        } else {
-            return resolve(items);
-        }
-    });
-}
-
-/** 判断是否有下一页 */
-function flagNext(lindex) {
-    let res = $(document.querySelector('#frame1').contentWindow.document).find(".essayBox:eq(" + lindex + ")>.pageBar>#CJFQ>a");
-    for (let rindex = 0; rindex < res.length; rindex++) {
-        const element = res[rindex];
-        let next = $(element).text();
-        if (next == "下一页") {
-            // 有下一页
-            $(element)[0].click();
-            return true;
-        }
-    }
-    return false;
-}
-
-//目录解析
+/** 来自wf的目录解析 */
 function parseMenu(str) {
     let arr = str.split(/[\r\n]+/);
     let result = [];
@@ -250,13 +169,9 @@ function getClc() {
         }
     }
     let res = [];
-    let clcs = clcCode.split(";");
-    for (let index = 0; index < clcs.length; index++) {
-        const element = clcs[index];
-        res.push({
-            "clcCode": element
-        });
-    }
+    res.push({
+        "clcCode": clcCode
+    });
     return res;
 }
 
@@ -265,10 +180,9 @@ function getAuthors() {
     // 获取单位信息放入map
     let compsText;
     let comps = new Map();
-    let comp = $(".wx-tit>h3>.author");
+    let comp = getUnits();
     for (let index = 0; index < comp.length; index++) {
-        const element = comp[index];
-        let eleText = $(element).text();
+        const eleText = comp[index];
         let compMatch = eleText.match(/^(\d+)\s*\.\s*(.+)/m);
         if (compMatch != null) {
             comps.set(compMatch[1], compMatch[2]);
@@ -278,7 +192,7 @@ function getAuthors() {
     }
     // 获取作者信息,遍历放入结果集,
     let authors = [];
-    let a = $("#authorpart>span>a");
+    let a = $("#authorpart>span");
     for (let index = 0; index < a.length; index++) {
         const element = a[index];
         let eleText = $(element).text();
@@ -310,4 +224,20 @@ function getAuthors() {
         }
     }
     return authors;
+}
+
+/** 来自xjd的获取作者单位 */
+function getUnits() {
+    let _arr = [];
+    let _string = $('.wx-tit h3:last-child').text().replace(/\s+/mg, "");
+    if (_string.indexOf('1')) {
+        _arr.push(_string)
+    }
+    var myregexp = /\d+\.(\S+?)(?=\d+\.|$)/mg;
+    var match = myregexp.exec(_string);
+    while (match != null) {
+        _arr.push(match[0])
+        match = myregexp.exec(_string)
+    }
+    return _arr;
 }

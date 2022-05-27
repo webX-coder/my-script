@@ -16,7 +16,7 @@ initButton();
 
 /** 创建按钮 */
 function initButton() {
-    $("body").append("<button class='cjwk_btn'>复制数据</button>");
+    $(".wrapper").append("<button class='cjwk_btn'>复制数据</button>");
     $('.cjwk_btn').css({
         "position": "fixed",
         "top": "100px",
@@ -227,20 +227,6 @@ function getAuthors() {
 }
 
 /** 来自xjd的获取作者单位 */
-function getUnits() {
-    let _arr = [];
-    let _string = $('.wx-tit h3:last-child').text().replace(/\s+/mg, "");
-    if (_string.indexOf('1')) {
-        _arr.push(_string)
-    }
-    var myregexp = /\d+\.(\S+?)(?=\d+\.|$)/mg;
-    var match = myregexp.exec(_string);
-    while (match != null) {
-        _arr.push(match[0])
-        match = myregexp.exec(_string)
-    }
-    return _arr;
-}
 class Getunits{
     constructor(){
         this.type = type
@@ -291,5 +277,3 @@ class Getunits{
      }
 }
 const _Getunits = new Getunits();
-
-//console.log(_data.strType())

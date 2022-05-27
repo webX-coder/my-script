@@ -229,7 +229,6 @@ function getAuthors() {
 /** 来自xjd的获取作者单位 */
 class Getunits{
     constructor(){
-        this.type = type
         this.string = $('.wx-tit h3:last-child')
         this.qukg = /\s+/mg,''
         this.tihuan = /\d+\.(\S+?)(?=\d+\.|$)/mg

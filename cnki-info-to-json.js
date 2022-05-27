@@ -3,7 +3,7 @@
 // @namespace   script
 // @match       https://*.cnki.net/kcms/detail**
 // @license     MIT
-// @version     1.7
+// @version     1.8
 // @author      Ybond
 // @grant       GM_notification
 // @grant       GM_setClipboard
@@ -24,7 +24,7 @@ function initButton() {
         "z-index": "99",
         "background-color": "#f98c51",
         "display": "inline-block",
-        "width": "110px",
+        "width": "110px", 
         "height": "32px",
         "font-size": "14px",
         "text-indent": "0",
@@ -69,7 +69,7 @@ function getDetail() {
     data.data.articlesAuthors = getAuthors();
 
     // 获取摘要
-    data.data.articles.summary = g_Summary.ChDivSummary;
+    data.data.articles.summary = $("#ChDivSummary").text();
 
     // 获取关键词
     data.data.articles.keywords = getKeywords();
@@ -180,7 +180,7 @@ function getAuthors() {
     // 获取单位信息放入map
     let compsText;
     let comps = new Map();
-    let comp = getUnits();
+    let comp = _Getunits.strType();
     for (let index = 0; index < comp.length; index++) {
         const eleText = comp[index];
         let compMatch = eleText.match(/^(\d+)\s*\.\s*(.+)/m);
@@ -241,3 +241,55 @@ function getUnits() {
     }
     return _arr;
 }
+class Getunits{
+    constructor(){
+        this.type = type
+        this.string = $('.wx-tit h3:last-child')
+        this.qukg = /\s+/mg,''
+        this.tihuan = /\d+\.(\S+?)(?=\d+\.|$)/mg
+        this._arr = []
+        this._praent = this.string.text().length
+        this._chiild = this.string.children().text().length
+    }
+    getUnits_1() {//只有单个字符且没有编号的单位
+        let _string = this.string.text().trim();
+        return [_string];
+    }
+    getUnits_2() { //单位有编号但首行编号(没有标签包裹)的单位
+        this._arr = []
+        let _string = this.string.text().replace(this.qukg);
+        if (_string.indexOf('1')) {
+            this._arr.push(_string)
+        }
+        // let _reg =  /\d+\.(\S+?)(?=\d+\.|$)/mg;
+        let match = this.tihuan.exec(_string);
+        while (match != null) {
+            this._arr.push(match[0].trim().replace(/undefined/g,''))
+            match = this.tihuan.exec(_string)
+        }
+        return this._arr;
+    }
+    getUnits_3() { //单位没有编号都是标签包裹纯文本
+        this._arr = []
+        let _string_1 = this.string.children()
+        for(let i=0;i<_string_1.length;i++){
+            let _text = _string_1[i].innerText
+            this._arr.push(_text.trim())
+        }
+        return this._arr;
+    }
+    strType(){//枚举字符串可能出现的问题
+        if(this.string.children().length==1){//没有编号且只有一个单位
+            return this.getUnits_1()
+        }
+        if(this._praent>this._chiild){//单位有编号但首行编号(没有标签包裹)的单位
+           return this.getUnits_2()
+        }
+        if(this._praent===this._chiild){//单位没有编号都是标签包裹纯文本
+           return this.getUnits_3()
+        }
+     }
+}
+const _Getunits = new Getunits();
+
+//console.log(_data.strType())

@@ -226,21 +226,22 @@ function getAuthors() {
     return authors;
 }
 
-/** 来自xjd的获取作者单位 */
-function getUnits() {
-    let _arr = [];
-    let _string = $('.wx-tit h3:last-child').text().replace(/\s+/mg, "");
-    if (_string.indexOf('1')) {
-        _arr.push(_string)
-    }
-    var myregexp = /\d+\.(\S+?)(?=\d+\.|$)/mg;
-    var match = myregexp.exec(_string);
-    while (match != null) {
-        _arr.push(match[0])
-        match = myregexp.exec(_string)
-    }
-    return _arr;
-}
+/** 来自xjd的获取作者单位NO-1 */
+// function getUnits() {
+//     let _arr = [];
+//     let _string = $('.wx-tit h3:last-child').text().replace(/\s+/mg, "");
+//     if (_string.indexOf('1')) {
+//         _arr.push(_string)
+//     }
+//     var myregexp = /\d+\.(\S+?)(?=\d+\.|$)/mg;
+//     var match = myregexp.exec(_string);
+//     while (match != null) {
+//         _arr.push(match[0])
+//         match = myregexp.exec(_string)
+//     }
+//     return _arr;
+// }
+/** 来自xjd的获取作者单位NO-2 */
 class Getunits{
     constructor(){
         this.type = type

@@ -3,29 +3,28 @@
 // @namespace   script
 // @match       https://*.cnki.net/kcms/detail**
 // @license     MIT
-// @version     1.91
+// @version     1.9
 // @author      Ybond
 // @grant       GM_notification
 // @grant       GM_setClipboard
 // @require     https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/jquery/3.6.0/jquery.min.js
 // @description 把页面上的部分信息抽取成JSON并放入剪切板
-// @updateURL   https://raw.githubusercontent.com/ybd0612/my-script/master/cnki-info-to-json.js
-// @downloadURL https://raw.githubusercontent.com/ybd0612/my-script/master/cnki-info-to-json.js
 // ==/UserScript==
 initButton();
 
 /** 创建按钮 */
 function initButton() {
-    $(".wrapper").append("<button class='cjwk_btn'>复制数据</button>");
-    $('.cjwk_btn').css({
-        "position": "fixed",
-        "top": "100px",
-        "right": "2%",
-        "z-index": "99",
+    $(".wrapper").append("<button class='cjwk_btn cjwk_btn_arr'>复制全部</button>");
+    $("#ChDivSummary").append("<button class='cjwk_btn cjwk_btn_jc' title='插件更新时间：2022-05-31'>复制基础数据(标题、摘要、关键词、基金、专辑、专题、分类号)</button>");
+    $(".brief #authorpart").append("<button class='cjwk_btn cjwk_btn_zzdw'>复制作者单位</button>");
+    $("#left_part").after("<button class='cjwk_btn cjwk_btn_ml'>复制目录</button>");
+    //$("#zqfilelist").prev().children().append("<button class='cjwk_btn cjwk_btn_flh'>复制分类号</button>");
+        $('.cjwk_btn').css({
         "background-color": "#f98c51",
         "display": "inline-block",
-        "width": "110px", 
         "height": "32px",
+        "width":"auto",
+        "padding":"0 10px",
         "font-size": "14px",
         "text-indent": "0",
         "text-align": "center",
@@ -34,37 +33,44 @@ function initButton() {
         "font-family": "Microsoft Yahei,serif",
         "border-radius": "4px",
         "overflow": "visible",
-        "background-color": "#f98c51",
-        "display": "inline-block",
-        "width": "110px",
-        "height": "32px",
-        "font-size": "14px",
-        "text-indent": "0",
-        "text-align": "center",
-        "color": "#fff",
-        "line-height": "32px",
-        "font-family": "Microsoft Yahei,serif",
-        "border-radius": "4px",
-        "overflow": "visible"
+    });
+    $(".cjwk_btn_arr").css({
+        "position": "fixed",
+        "top": "100px",
+        "right": "2%",
+        "z-index": "99",
+    });
+
+    $(".cjwk_btn_jc").css({
+
     });
 }
-
+let items = [];
+let data = {};
+//全部数据
 $('.cjwk_btn').on("click", function () {
-    getDetail();
+    setAllData()
+});
+//基础数据
+$('.cjwk_btn_jc').on("click", function () {
+   setJichuData()
+});
+//作者单位
+$('.cjwk_btn_zzdw').on("click", function () {
+    setAuthorsUnitData()
+});
+//文章目录
+$('.cjwk_btn_ml').on("click", function () {
+    setCatalogueData()
 });
 
-let items = [];
 
-/** 获取详情 */
-function getDetail() {
-    let data = {};
-    data.data = {};
-
-
+//----获取全部数据----
+function setAllData(){
+     data.data = {};
     // 获取标题
     data.data.articles = {};
     data.data.articles.title = $(".wx-tit>h1").text();
-
     // 获取作者及单位
     data.data.articlesAuthors = getAuthors();
 
@@ -82,11 +88,56 @@ function getDetail() {
 
     // 获取目录
     data.data.menus = getMenus();
+    GM_setClipboard(JSON.stringify(data), 'text');
+    alert('信息获取成功,已复制')
+}
+//----获取基础数据----
+function setJichuData(){
+    data.data = {};
+    // 获取标题
+    data.data.articles = {};
+    data.data.articles.title = $(".wx-tit>h1").text();
+    // 获取摘要
+    data.data.articles.summary = $("#ChDivSummary").text();
+
+    // 获取关键词
+    data.data.articles.keywords = getKeywords();
+
+    // 获取基金项目
+    data.data.articles.fund = handleStr($(".funds").text());
+
+    // 获取分类号
+    data.data.clcs = getClc();
 
     GM_setClipboard(JSON.stringify(data), 'text');
-    GM_notification("信息获取成功,已复制");
+
+    alert('信息获取成功,已复制')
 
 }
+//----获取目录数据----
+function setCatalogueData(){
+    data.data = {};
+    data.data.menus = {}
+    // 获取目录
+    data.data.menus = getMenus();
+    GM_setClipboard(JSON.stringify(data), 'text');
+    alert('信息获取成功,已复制')
+
+}
+
+//----获取作者单位数据----
+function setAuthorsUnitData(){
+    data.data = {};
+    data.data.articlesAuthors = {}
+    // 获取作者及单位
+    data.data.articlesAuthors = getAuthors();
+    GM_setClipboard(JSON.stringify(data), 'text');
+    alert('信息获取成功,已复制')
+
+}
+
+
+
 
 /** 删除空格,并替换分号 */
 function handleStr(str) {
@@ -212,6 +263,8 @@ class Getunits{
         return this._arr;
     }
     strType(){//枚举字符串可能出现的问题
+        // let _praent = this.string.text().length
+        // let _chiild = this.string.children().text().length
         if(this.string.children().length==1){//没有编号且只有一个单位
             return this.getUnits_1()
         }
@@ -223,13 +276,14 @@ class Getunits{
         }
      }
 }
-const _Getunits = new Getunits();
+let _data = new Getunits();
+
 /** 获取作者及单位信息 */
 function getAuthors() {
     // 获取单位信息放入map
     let compsText;
     let comps = new Map();
-    let comp = _Getunits.strType();
+    let comp = _data.strType();
     for (let index = 0; index < comp.length; index++) {
         const eleText = comp[index];
         let compMatch = eleText.match(/^(\d+)\s*\.\s*(.+)/m);
@@ -245,7 +299,7 @@ function getAuthors() {
     for (let index = 0; index < a.length; index++) {
         const element = a[index];
         let eleText = $(element).text();
-        authorMatch = eleText.match(/^(\D+)([\d,]+)/m);
+        let authorMatch = eleText.match(/^(\D+)([\d,]+)/m);
         if (authorMatch != null) {
             let a1 = authorMatch[1];
             let a2 = authorMatch[2];

@@ -3,7 +3,7 @@
 // @namespace   script
 // @match       https://*.cnki.net/kcms/detail**
 // @license     MIT
-// @version     1.9
+// @version     1.9.2
 // @author      Ybond
 // @grant       GM_notification
 // @grant       GM_setClipboard
@@ -329,3 +329,7 @@ function getAuthors() {
     return authors;
 }
 
+//-------------------------------------------------------------------------------------更新日志-------------------------------------------------------------------------------------
+// date              |-|               author           |-|             describe
+
+//2022-05-31                      xjd                                代码基础优化，有待深入优化（添加单个数据源获取）

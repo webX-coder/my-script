@@ -3,7 +3,7 @@
 // @namespace   script
 // @match       https://*.cnki.net/kcms/detail**
 // @license     MIT
-// @version     2.0.2
+// @version     2.0.3
 // @author      Ybond
 // @grant       GM_notification
 // @grant       GM_setClipboard
@@ -14,7 +14,7 @@ initButton();
 /** 创建按钮 */
 function initButton() {
     $(".wrapper").append("<button class='cjwk_btn cjwk_btn_arr'>复制全部</button>");
-    $("#ChDivSummary").next().append("<button class='cjwk_btn cjwk_btn_jc' title='插件更新时间：2022-05-31'>复制基础数据(标题、摘要、关键词、基金、专辑、专题、分类号)</button>");
+    $("#ChDivSummary").next().append("<button class='cjwk_btn cjwk_btn_jc' title='插件更新时间：2022-05-31'>复制基础数据(标题、副标题、摘要、关键词、基金、专辑、专题、分类号)</button>");
     $(".brief #authorpart").append("<button class='cjwk_btn cjwk_btn_zzdw'>复制作者单位</button>");
     $("#left_part").after("<button class='cjwk_btn cjwk_btn_ml'>复制目录</button>");
     //$("#zqfilelist").prev().children().append("<button class='cjwk_btn cjwk_btn_flh'>复制分类号</button>");
@@ -66,6 +66,11 @@ function setAllData(){
     // 获取标题
     data.data.articles = {};
     data.data.articles.title = $(".wx-tit>h1").text();
+    let _title = $(".wx-tit>h1").text().trim();
+    let _index = _title.indexOf("—");
+    let _subtitle = _title.substr(_index + 1,_title.length)
+    data.data.articles.title = _title;
+    data.data.articles.subTitle = _subtitle;
     // 获取作者及单位
     data.data.articlesAuthors = getAuthors();
 
@@ -91,7 +96,11 @@ function setJichuData(){
     data.data = {};
     // 获取标题
     data.data.articles = {};
-    data.data.articles.title = $(".wx-tit>h1").text();
+    let _title = $(".wx-tit>h1").text().trim();
+    let _index = _title.indexOf("——");
+    let _subtitle = _title.substr(_index + 2,_title.length)
+    data.data.articles.title = _title;
+    data.data.articles.subTitle = _subtitle;
     // 获取摘要
     data.data.articles.summary = $("#ChDivSummary").text();
 
@@ -328,3 +337,4 @@ function getAuthors() {
 //2022-05-31                           xjd                              2.0                             代码基础优化，有待深入优化（添加单个数据源获取）
 //2022-05-31                           xjd                              2.0.1                           修改点击复制弹窗两次bug
 //2022-05-31                           xjd                              2.0.2                           修改更多摘要覆盖基础按钮bug
+//2022-06-1                            xjd                              2.0.3                           添加副标题

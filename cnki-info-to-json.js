@@ -3,7 +3,7 @@
 // @namespace   script
 // @match       https://*.cnki.net/kcms/detail**
 // @license     MIT
-// @version     1.9.2
+// @version     2.0.2
 // @author      Ybond
 // @grant       GM_notification
 // @grant       GM_setClipboard
@@ -11,15 +11,14 @@
 // @description 把页面上的部分信息抽取成JSON并放入剪切板
 // ==/UserScript==
 initButton();
-
 /** 创建按钮 */
 function initButton() {
     $(".wrapper").append("<button class='cjwk_btn cjwk_btn_arr'>复制全部</button>");
-    $("#ChDivSummary").append("<button class='cjwk_btn cjwk_btn_jc' title='插件更新时间：2022-05-31'>复制基础数据(标题、摘要、关键词、基金、专辑、专题、分类号)</button>");
+    $("#ChDivSummary").next().append("<button class='cjwk_btn cjwk_btn_jc' title='插件更新时间：2022-05-31'>复制基础数据(标题、摘要、关键词、基金、专辑、专题、分类号)</button>");
     $(".brief #authorpart").append("<button class='cjwk_btn cjwk_btn_zzdw'>复制作者单位</button>");
     $("#left_part").after("<button class='cjwk_btn cjwk_btn_ml'>复制目录</button>");
     //$("#zqfilelist").prev().children().append("<button class='cjwk_btn cjwk_btn_flh'>复制分类号</button>");
-        $('.cjwk_btn').css({
+    $('.cjwk_btn').css({
         "background-color": "#f98c51",
         "display": "inline-block",
         "height": "32px",
@@ -40,15 +39,11 @@ function initButton() {
         "right": "2%",
         "z-index": "99",
     });
-
-    $(".cjwk_btn_jc").css({
-
-    });
 }
 let items = [];
 let data = {};
 //全部数据
-$('.cjwk_btn').on("click", function () {
+$('.cjwk_btn_arr').on("click", function () {
     setAllData()
 });
 //基础数据
@@ -89,7 +84,7 @@ function setAllData(){
     // 获取目录
     data.data.menus = getMenus();
     GM_setClipboard(JSON.stringify(data), 'text');
-    alert('信息获取成功,已复制')
+    alert('全部信息获取成功,已复制')
 }
 //----获取基础数据----
 function setJichuData(){
@@ -111,7 +106,7 @@ function setJichuData(){
 
     GM_setClipboard(JSON.stringify(data), 'text');
 
-    alert('信息获取成功,已复制')
+    alert('基础数据获取成功,已复制')
 
 }
 //----获取目录数据----
@@ -121,10 +116,9 @@ function setCatalogueData(){
     // 获取目录
     data.data.menus = getMenus();
     GM_setClipboard(JSON.stringify(data), 'text');
-    alert('信息获取成功,已复制')
+    alert('目录获取成功,已复制')
 
 }
-
 //----获取作者单位数据----
 function setAuthorsUnitData(){
     data.data = {};
@@ -132,11 +126,9 @@ function setAuthorsUnitData(){
     // 获取作者及单位
     data.data.articlesAuthors = getAuthors();
     GM_setClipboard(JSON.stringify(data), 'text');
-    alert('信息获取成功,已复制')
+    alert('作者单位获取成功,已复制')
 
 }
-
-
 
 
 /** 删除空格,并替换分号 */
@@ -330,6 +322,9 @@ function getAuthors() {
 }
 
 //-------------------------------------------------------------------------------------更新日志-------------------------------------------------------------------------------------
-// date              |-|               author           |-|             describe
 
-//2022-05-31                           xjd                        代码基础优化，有待深入优化（添加单个数据源获取）
+// date              |-|               author           |-|             versions          |-|             describe
+
+//2022-05-31                           xjd                              2.0                             代码基础优化，有待深入优化（添加单个数据源获取）
+//2022-05-31                           xjd                              2.0.1                           修改点击复制弹窗两次bug
+//2022-05-31                           xjd                              2.0.2                           修改更多摘要覆盖基础按钮bug

@@ -3,14 +3,14 @@
 // @namespace   script
 // @match       https://*.cnki.net/kcms/detail**
 // @license     MIT
-// @version     2.0.3
+// @version     2.0.7
 // @author      Ybond
 // @grant       GM_notification
 // @grant       GM_setClipboard
 // @require     https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/jquery/3.6.0/jquery.min.js
 // @description 把页面上的部分信息抽取成JSON并放入剪切板
 // ==/UserScript==
-initButton();
+//initButton();
 /** 创建按钮 */
 function initButton() {
     $(".wrapper").append("<button class='cjwk_btn cjwk_btn_arr'>复制全部</button>");
@@ -65,12 +65,13 @@ function setAllData(){
      data.data = {};
     // 获取标题
     data.data.articles = {};
-    data.data.articles.title = $(".wx-tit>h1").text();
     let _title = $(".wx-tit>h1").text().trim();
-    let _index = _title.indexOf("—");
-    let _subtitle = _title.substr(_index + 1,_title.length)
+    let _index = _title.indexOf("——");
+    if(_index>0){
+        let _subtitle = _title.substr(_index + 2,_title.length)
+        data.data.articles.subTitle = _subtitle;
+    }
     data.data.articles.title = _title;
-    data.data.articles.subTitle = _subtitle;
     // 获取作者及单位
     data.data.articlesAuthors = getAuthors();
 
@@ -98,9 +99,11 @@ function setJichuData(){
     data.data.articles = {};
     let _title = $(".wx-tit>h1").text().trim();
     let _index = _title.indexOf("——");
-    let _subtitle = _title.substr(_index + 2,_title.length)
+    if(_index>0){
+        let _subtitle = _title.substr(_index + 2,_title.length)
+        data.data.articles.subTitle = _subtitle;
+    }
     data.data.articles.title = _title;
-    data.data.articles.subTitle = _subtitle;
     // 获取摘要
     data.data.articles.summary = $("#ChDivSummary").text();
 
@@ -337,4 +340,6 @@ function getAuthors() {
 //2022-05-31                           xjd                              2.0                             代码基础优化，有待深入优化（添加单个数据源获取）
 //2022-05-31                           xjd                              2.0.1                           修改点击复制弹窗两次bug
 //2022-05-31                           xjd                              2.0.2                           修改更多摘要覆盖基础按钮bug
-//2022-06-1                            xjd                              2.0.3                           添加副标题
+//2022-06-1                            xjd                              2.0.5                           添加副标题                           添加副标题
+//2022-06-02                           xjd                              2.0.6                           修改副标题bug
+//2022-06-06                           xjd                              2.0.7                           隐藏插件

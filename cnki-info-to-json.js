@@ -3,14 +3,14 @@
 // @namespace   script
 // @match       https://*.cnki.net/kcms/detail**
 // @license     MIT
-// @version     2.0.7
+// @version     2.0.8
 // @author      Ybond
 // @grant       GM_notification
 // @grant       GM_setClipboard
 // @require     https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/jquery/3.6.0/jquery.min.js
 // @description 把页面上的部分信息抽取成JSON并放入剪切板
 // ==/UserScript==
-//initButton();
+initButton();
 /** 创建按钮 */
 function initButton() {
     $(".wrapper").append("<button class='cjwk_btn cjwk_btn_arr'>复制全部</button>");

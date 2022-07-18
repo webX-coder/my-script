@@ -3,7 +3,7 @@
 // @namespace   script
 // @match       https://*.cnki.net/kcms/detail**
 // @license     MIT
-// @version     2.0.8
+// @version     2.0.9
 // @author      Ybond
 // @grant       GM_notification
 // @grant       GM_setClipboard

@@ -3,7 +3,7 @@
 // @namespace   script
 // @match       https://*.cnki.net/kcms/detail**
 // @license     MIT
-// @version     2.0.9
+// @version     2.1.0
 // @author      Ybond
 // @grant       GM_notification
 // @grant       GM_setClipboard
@@ -407,4 +407,4 @@ function getAuthors() {
 //2022-06-1                            xjd                              2.0.5                           添加副标题                           添加副标题
 //2022-06-02                           xjd                              2.0.6                           修改副标题bug
 //2022-06-06                           xjd                              2.0.7                           隐藏插件
-//2022-07-18                           xjd                              2.0.9                           将基础数据拆分为多个按钮5个
+//2022-07-18                           xjd                              2.1.0                           将基础数据拆分为多个按钮5个

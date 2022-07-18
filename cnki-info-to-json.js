@@ -14,7 +14,15 @@ initButton();
 /** 创建按钮 */
 function initButton() {
     $(".wrapper").append("<button class='cjwk_btn cjwk_btn_arr'>复制全部</button>");
-    $("#ChDivSummary").next().append("<button class='cjwk_btn cjwk_btn_jc' title='插件更新时间：2022-05-31'>复制基础数据(标题、副标题、摘要、关键词、基金、专辑、专题、分类号)</button>");
+    const _all_btn = `
+                        <button class='cjwk_btn cjwk_btn_all_title'>复制标题、副标题</button>
+                        <button class='cjwk_btn cjwk_btn_all_abstract'>复制摘要</button>
+                        <button class='cjwk_btn cjwk_btn_all_keyword'>复制关键词</button>
+                        <button class='cjwk_btn cjwk_btn_all_fund'>复制基金</button>
+                        <button class='cjwk_btn cjwk_btn_all_classNumber'>复制分类号</button>
+                      `
+    // $("#ChDivSummary").next().append("<button class='cjwk_btn cjwk_btn_jc' title='插件更新时间：2022-05-31'>复制基础数据(标题、副标题、摘要、关键词、基金、专辑、专题、分类号)</button>");
+    $("#ChDivSummary").next().append(`<div class="cjwk_all_btn_warp">${_all_btn}</div>`);
     $(".brief #authorpart").append("<button class='cjwk_btn cjwk_btn_zzdw'>复制作者单位</button>");
     $("#left_part").after("<button class='cjwk_btn cjwk_btn_ml'>复制目录</button>");
     //$("#zqfilelist").prev().children().append("<button class='cjwk_btn cjwk_btn_flh'>复制分类号</button>");
@@ -22,8 +30,8 @@ function initButton() {
         "background-color": "#f98c51",
         "display": "inline-block",
         "height": "32px",
-        "width":"auto",
-        "padding":"0 10px",
+        "width": "auto",
+        "padding": "0 10px",
         "font-size": "14px",
         "text-indent": "0",
         "text-align": "center",
@@ -39,6 +47,12 @@ function initButton() {
         "right": "2%",
         "z-index": "99",
     });
+    $(".cjwk_all_btn_warp").css({
+        "display": "fixe",
+    });
+    $(".cjwk_all_btn_warp button").css({
+        "margin-right": "5px",
+    });
 }
 let items = [];
 let data = {};
@@ -48,7 +62,7 @@ $('.cjwk_btn_arr').on("click", function () {
 });
 //基础数据
 $('.cjwk_btn_jc').on("click", function () {
-   setJichuData()
+    setJichuData()
 });
 //作者单位
 $('.cjwk_btn_zzdw').on("click", function () {
@@ -59,16 +73,53 @@ $('.cjwk_btn_ml').on("click", function () {
     setCatalogueData()
 });
 
+// begin-------------------新拆分(原基础数据)-------------------
+//复制标题、副标题
+$('.cjwk_btn_all_title').on("click", function () {
+    setJichuData(1)
+});
+
+//复制摘要
+$('.cjwk_btn_all_abstract').on("click", function () {
+    setJichuData(2)
+});
+//复制关键词
+$('.cjwk_btn_all_keyword').on("click", function () {
+    setJichuData(3)
+});
+//复制基金
+$('.cjwk_btn_all_fund').on("click", function () {
+    setJichuData(4)
+});
+//复制分类号
+$('.cjwk_btn_all_classNumber').on("click", function () {
+    setJichuData()
+});
+// //复制副标题
+// $('.cjwk_btn_all_subTitle').on("click", function () {
+//     setJichuData()
+// });
+// //复制专辑
+// $('.cjwk_btn_all_collection').on("click", function () {
+//     setJichuData()
+// });
+// //复制专题
+// $('.cjwk_btn_all_special').on("click", function () {
+//     setJichuData()
+// });
+
+// end-------------------新拆分-------------------
+
 
 //----获取全部数据----
-function setAllData(){
-     data.data = {};
+function setAllData() {
+    data.data = {};
     // 获取标题
     data.data.articles = {};
     let _title = $(".wx-tit>h1").text().trim();
     let _index = _title.indexOf("——");
-    if(_index>0){
-        let _subtitle = _title.substr(_index + 2,_title.length)
+    if (_index > 0) {
+        let _subtitle = _title.substr(_index + 2, _title.length)
         data.data.articles.subTitle = _subtitle;
     }
     data.data.articles.title = _title;
@@ -93,36 +144,49 @@ function setAllData(){
     alert('全部信息获取成功,已复制')
 }
 //----获取基础数据----
-function setJichuData(){
+function setJichuData(type) {
     data.data = {};
-    // 获取标题
     data.data.articles = {};
-    let _title = $(".wx-tit>h1").text().trim();
-    let _index = _title.indexOf("——");
-    if(_index>0){
-        let _subtitle = _title.substr(_index + 2,_title.length)
-        data.data.articles.subTitle = _subtitle;
+    let _alert = '分类号';
+    let _title,_index,_subtitle
+    switch (type) {
+        case 1:
+            // 获取标题、副标题
+             _title = $(".wx-tit>h1").text().trim();
+             _index = _title.indexOf("——");
+            if (_index > 0) {
+                _subtitle = _title.substr(_index + 2, _title.length)
+                data.data.articles.subTitle = _subtitle;
+            }
+            data.data.articles.title = _title;
+            _alert = '标题、副标题';
+            break;
+        case 2:
+            // 获取摘要
+            data.data.articles.summary = $("#ChDivSummary").text();
+            _alert = '摘要';
+            break;
+        case 3:
+            // 获取关键词
+            data.data.articles.keywords = getKeywords();
+            _alert = '关键词';
+            break;
+        case 4:
+            // 获取基金项目
+            data.data.articles.fund = handleStr($(".funds").text());
+            _alert = '基金项目';
+            break;
+        default:
+            // 获取分类号
+            data.data.clcs = getClc();
     }
-    data.data.articles.title = _title;
-    // 获取摘要
-    data.data.articles.summary = $("#ChDivSummary").text();
-
-    // 获取关键词
-    data.data.articles.keywords = getKeywords();
-
-    // 获取基金项目
-    data.data.articles.fund = handleStr($(".funds").text());
-
-    // 获取分类号
-    data.data.clcs = getClc();
-
     GM_setClipboard(JSON.stringify(data), 'text');
 
-    alert('基础数据获取成功,已复制')
+    alert(_alert+'数据获取成功,已复制')
 
 }
 //----获取目录数据----
-function setCatalogueData(){
+function setCatalogueData() {
     data.data = {};
     data.data.menus = {}
     // 获取目录
@@ -132,7 +196,7 @@ function setCatalogueData(){
 
 }
 //----获取作者单位数据----
-function setAuthorsUnitData(){
+function setAuthorsUnitData() {
     data.data = {};
     data.data.articlesAuthors = {}
     // 获取作者及单位
@@ -230,10 +294,10 @@ function getClc() {
     return res;
 }
 /** 来自xjd的获取作者单位 */
-class Getunits{
-    constructor(){
+class Getunits {
+    constructor() {
         this.string = $('.wx-tit h3:last-child')
-        this.qukg = /\s+/mg,''
+        this.qukg = /\s+/mg, ''
         this.tihuan = /\d+\.(\S+?)(?=\d+\.|$)/mg
         this._arr = []
         this._praent = this.string.text().trim().length
@@ -252,7 +316,7 @@ class Getunits{
         // let _reg =  /\d+\.(\S+?)(?=\d+\.|$)/mg;
         let match = this.tihuan.exec(_string);
         while (match != null) {
-            this._arr.push(match[0].trim().replace(/undefined/g,''))
+            this._arr.push(match[0].trim().replace(/undefined/g, ''))
             match = this.tihuan.exec(_string)
         }
         return this._arr;
@@ -260,25 +324,25 @@ class Getunits{
     getUnits_3() { //单位没有编号都是标签包裹纯文本
         this._arr = []
         let _string_1 = this.string.children()
-        for(let i=0;i<_string_1.length;i++){
+        for (let i = 0; i < _string_1.length; i++) {
             let _text = _string_1[i].innerText
             this._arr.push(_text.trim())
         }
         return this._arr;
     }
-    strType(){//枚举字符串可能出现的问题
+    strType() {//枚举字符串可能出现的问题
         // let _praent = this.string.text().length
         // let _chiild = this.string.children().text().length
-        if(this.string.children().length==1){//没有编号且只有一个单位
+        if (this.string.children().length == 1) {//没有编号且只有一个单位
             return this.getUnits_1()
         }
-        if(this._praent>this._chiild){//单位有编号但首行编号(没有标签包裹)的单位
-           return this.getUnits_2()
+        if (this._praent > this._chiild) {//单位有编号但首行编号(没有标签包裹)的单位
+            return this.getUnits_2()
         }
-        if(this._praent===this._chiild){//单位没有编号都是标签包裹纯文本
-           return this.getUnits_3()
+        if (this._praent === this._chiild) {//单位没有编号都是标签包裹纯文本
+            return this.getUnits_3()
         }
-     }
+    }
 }
 let _data = new Getunits();
 
@@ -343,3 +407,4 @@ function getAuthors() {
 //2022-06-1                            xjd                              2.0.5                           添加副标题                           添加副标题
 //2022-06-02                           xjd                              2.0.6                           修改副标题bug
 //2022-06-06                           xjd                              2.0.7                           隐藏插件
+//2022-07-18                           xjd                              2.0.9                           将基础数据拆分为多个按钮5个

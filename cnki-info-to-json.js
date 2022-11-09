@@ -1,10 +1,10 @@
 // ==UserScript==
 // @name        知网页面信息转JSON
 // @namespace   script
-// @match       https://*.cnki.net/kcms/detail**
+// @match       https://*.cnki.net/kcms/*/*?*=**
 // @license     MIT
-// @version     2.1.0
-// @author      Ybond
+// @version     2.1.1
+// @author      Ade
 // @grant       GM_notification
 // @grant       GM_setClipboard
 // @require     https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/jquery/3.6.0/jquery.min.js
@@ -408,3 +408,4 @@ function getAuthors() {
 //2022-06-02                           xjd                              2.0.6                           修改副标题bug
 //2022-06-06                           xjd                              2.0.7                           隐藏插件
 //2022-07-18                           xjd                              2.1.0                           将基础数据拆分为多个按钮5个
+//2022-11-09                           xjd                              2.1.1                           修复插件地址匹配问题

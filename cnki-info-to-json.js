@@ -3,7 +3,7 @@
 // @namespace   script
 // @match       https://*.cnki.net/*/*/*?*=**
 // @license     MIT
-// @version     2.1.2
+// @version     2.1.3
 // @author      Ade
 // @grant       GM_notification
 // @grant       GM_setClipboard
@@ -136,7 +136,7 @@ function setAllData() {
     data.data.articles.fund = handleStr($(".funds").text());
 
     // 获取分类号
-    data.data.clcs = getClc();
+    //data.data.clcs = getClc(); //因为复制数据没解析出来准确，要求注释
 
     // 获取目录
     data.data.menus = getMenus();
@@ -409,3 +409,4 @@ function getAuthors() {
 //2022-06-06                           xjd                              2.0.7                           隐藏插件
 //2022-07-18                           xjd                              2.1.0                           将基础数据拆分为多个按钮5个
 //2022-11-09                           xjd                              2.1.1                           修复插件地址匹配问题
+//2023-02-09                           xjd                              2.1.3                           复制数据没解析出来准确，要求注释获取分类号

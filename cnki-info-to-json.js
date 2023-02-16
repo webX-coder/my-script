@@ -3,7 +3,7 @@
 // @namespace   script
 // @match       https://*.cnki.net/*/*/*?*=**
 // @license     MIT
-// @version     2.1.3
+// @version     2.1.4
 // @author      Ade
 // @grant       GM_notification
 // @grant       GM_setClipboard
@@ -133,7 +133,7 @@ function setAllData() {
     data.data.articles.keywords = getKeywords();
 
     // 获取基金项目
-    data.data.articles.fund = handleStr($(".funds").text());
+    data.data.articles.fund = handleStr($(".funds").text()).replace(/[;。]\s*$/g, "");;
 
     // 获取分类号
     //data.data.clcs = getClc(); //因为复制数据没解析出来准确，要求注释
@@ -173,7 +173,7 @@ function setJichuData(type) {
             break;
         case 4:
             // 获取基金项目
-            data.data.articles.fund = handleStr($(".funds").text());
+            data.data.articles.fund = handleStr($(".funds").text()).replace(/[;。]\s*$/g, "");;
             _alert = '基金项目';
             break;
         default:
@@ -410,3 +410,4 @@ function getAuthors() {
 //2022-07-18                           xjd                              2.1.0                           将基础数据拆分为多个按钮5个
 //2022-11-09                           xjd                              2.1.1                           修复插件地址匹配问题
 //2023-02-09                           xjd                              2.1.3                           复制数据没解析出来准确，要求注释获取分类号
+//2023-02-16                           xjd                              2.1.4                           复制的知网基金项目内容，去掉最后一个分号；和句号。

@@ -3,7 +3,7 @@
 // @namespace   script
 // @match       https://*.cnki.net/*/*/*?*=**
 // @license     MIT
-// @version     2.1.4
+// @version     2.1.7
 // @author      Ade
 // @grant       GM_notification
 // @grant       GM_setClipboard
@@ -268,8 +268,14 @@ function getMenus() {
     let res = "";
     for (let index = 0; index < mns.length; index++) {
         const element = mns[index];
-        let eleText = $(element).text();
-        res += eleText + "\r\n";
+        let eleText = $(element).text()?.replace(/\s*/g,""),_eleText='';//去掉自带空格的目录，程序统一加空格
+        if(!/^\s*(\d+\s*\.\s*){2,}\d+\s*/im.test($(element).text())){//剔除三级目录
+           _eleText = eleText?.replace(/^\s*(\d+(?:\.\d+)?)/img, "$1 ");//数字和标题之间加空格
+            if(_eleText.indexOf('.')>-1){
+                _eleText = " "+_eleText;
+            }
+        }
+        res += _eleText + "\r\n";
     }
     return parseMenu(res);
 }
@@ -305,7 +311,16 @@ class Getunits {
     }
     getUnits_1() {//只有单个字符且没有编号的单位
         let _string = this.string.text().trim();
-        return [_string];
+        //return [_string] ;
+        let authorpart = $("#authorpart>span").length,_authorpart = [];
+        if(authorpart>1){ //多个作者
+            for(let i = 0;i<authorpart;i++){
+                _authorpart.push(_string)
+            }
+        }else{  //一个作者
+           _authorpart.push(_string);
+        }
+       return _authorpart
     }
     getUnits_2() { //单位有编号但首行编号(没有标签包裹)的单位
         this._arr = []
@@ -334,7 +349,7 @@ class Getunits {
         // let _praent = this.string.text().length
         // let _chiild = this.string.children().text().length
         if (this.string.children().length == 1) {//没有编号且只有一个单位
-            return this.getUnits_1()
+             return this.getUnits_1()
         }
         if (this._praent > this._chiild) {//单位有编号但首行编号(没有标签包裹)的单位
             return this.getUnits_2()
@@ -364,8 +379,9 @@ function getAuthors() {
     // 获取作者信息,遍历放入结果集,
     let authors = [];
     let a = $("#authorpart>span");
+     debugger
     for (let index = 0; index < a.length; index++) {
-        const element = a[index];
+        const element = a[index].firstChild;//去掉Email数据带来的影响
         let eleText = $(element).text();
         let authorMatch = eleText.match(/^(\D+)([\d,]+)/m);
         if (authorMatch != null) {
@@ -404,10 +420,11 @@ function getAuthors() {
 //2022-05-31                           xjd                              2.0                             代码基础优化，有待深入优化（添加单个数据源获取）
 //2022-05-31                           xjd                              2.0.1                           修改点击复制弹窗两次bug
 //2022-05-31                           xjd                              2.0.2                           修改更多摘要覆盖基础按钮bug
-//2022-06-1                            xjd                              2.0.5                           添加副标题                           添加副标题
+//2022-06-1                            xjd                              2.0.5                           添加副标题
 //2022-06-02                           xjd                              2.0.6                           修改副标题bug
 //2022-06-06                           xjd                              2.0.7                           隐藏插件
 //2022-07-18                           xjd                              2.1.0                           将基础数据拆分为多个按钮5个
 //2022-11-09                           xjd                              2.1.1                           修复插件地址匹配问题
 //2023-02-09                           xjd                              2.1.3                           复制数据没解析出来准确，要求注释获取分类号
 //2023-02-16                           xjd                              2.1.4                           复制的知网基金项目内容，去掉最后一个分号；和句号。
+//2023-02-20                           xjd                              2.1.7                           1、修复作者后台邮箱数据带来的影响（多个作者一个单位，最后一个作者没绑定单位），2、目录的数字和标题之间加空格，去掉三级目录

@@ -3,7 +3,7 @@
 // @namespace   script
 // @match       https://*.cnki.net/*/*/*?*=**
 // @license     MIT
-// @version     2.1.7
+// @version     2.1.9
 // @author      Ade
 // @grant       GM_notification
 // @grant       GM_setClipboard
@@ -222,6 +222,7 @@ function getKeywords() {
 
 /** 来自wf的目录解析 */
 function parseMenu(str) {
+     console.log(str)
     let arr = str.split(/[\r\n]+/);
     let result = [];
     let result_ = [];
@@ -232,7 +233,6 @@ function parseMenu(str) {
 
     for (let i = 0, len_i = arr.length; i < len_i; i++) {
         let line = arr[i];
-
         //非空白行才进
         if (/\S/.test(line)) {
             //一级菜单
@@ -268,14 +268,11 @@ function getMenus() {
     let res = "";
     for (let index = 0; index < mns.length; index++) {
         const element = mns[index];
-        let eleText = $(element).text()?.replace(/\s*/g,""),_eleText='';//去掉自带空格的目录，程序统一加空格
-        if(!/^\s*(\d+\s*\.\s*){2,}\d+\s*/im.test($(element).text())){//剔除三级目录
-           _eleText = eleText?.replace(/^\s*(\d+(?:\.\d+)?)/img, "$1 ");//数字和标题之间加空格
-            if(_eleText.indexOf('.')>-1){
-                _eleText = " "+_eleText;
-            }
-        }
-        res += _eleText + "\r\n";
+        let eleText = $(element).text(),_eleText='';//去掉自带空格的目录，程序统一加空格
+      //  if(!/^\s*(\d+\s*\.\s*){2,}\d+\s*/im.test($(element).text())){//剔除三级目录
+         //  _eleText = eleText?.replace(/^\s*(\d+(?:\.\d+)?)/img, "$1 ");//数字和标题之间加空格
+      //  }
+        res += eleText + "\r\n";
     }
     return parseMenu(res);
 }
@@ -379,7 +376,6 @@ function getAuthors() {
     // 获取作者信息,遍历放入结果集,
     let authors = [];
     let a = $("#authorpart>span");
-     debugger
     for (let index = 0; index < a.length; index++) {
         const element = a[index].firstChild;//去掉Email数据带来的影响
         let eleText = $(element).text();
@@ -427,4 +423,4 @@ function getAuthors() {
 //2022-11-09                           xjd                              2.1.1                           修复插件地址匹配问题
 //2023-02-09                           xjd                              2.1.3                           复制数据没解析出来准确，要求注释获取分类号
 //2023-02-16                           xjd                              2.1.4                           复制的知网基金项目内容，去掉最后一个分号；和句号。
-//2023-02-20                           xjd                              2.1.7                           1、修复作者后台邮箱数据带来的影响（多个作者一个单位，最后一个作者没绑定单位），2、目录的数字和标题之间加空格，去掉三级目录
+//2023-02-20                           xjd                              2.1.7                           1、修复作者后台邮箱数据带来的影响（多个作者一个单位，最后一个作者没绑定单位），2、目录的数字和标题之间加空格

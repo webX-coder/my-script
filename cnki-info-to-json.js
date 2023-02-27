@@ -3,7 +3,7 @@
 // @namespace   script
 // @match       https://*.cnki.net/*/*/*?*=**
 // @license     MIT
-// @version     2.1.9
+// @version     2.2.0
 // @author      Ade
 // @grant       GM_notification
 // @grant       GM_setClipboard
@@ -270,7 +270,7 @@ function getMenus() {
         const element = mns[index];
         let eleText = $(element).text(),_eleText='';//去掉自带空格的目录，程序统一加空格
       //  if(!/^\s*(\d+\s*\.\s*){2,}\d+\s*/im.test($(element).text())){//剔除三级目录
-         //  _eleText = eleText?.replace(/^\s*(\d+(?:\.\d+)?)/img, "$1 ");//数字和标题之间加空格
+        eleText = eleText?.replace(/^(\s*\d+(?:\.\d+)?)\s*([^\r\n]+)/img, "$1 $2");//数字和标题之间加空格
       //  }
         res += eleText + "\r\n";
     }

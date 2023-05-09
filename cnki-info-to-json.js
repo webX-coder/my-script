@@ -3,12 +3,13 @@
 // @namespace   script
 // @match       https://*.cnki.net/*/*/*?*=**
 // @license     MIT
-// @version     2.2.0
+// @version     2.2.3
 // @author      Ade
 // @grant       GM_notification
 // @grant       GM_setClipboard
 // @require     https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/jquery/3.6.0/jquery.min.js
 // @description 把页面上的部分信息抽取成JSON并放入剪切板
+// @downloadURL none
 // ==/UserScript==
 initButton();
 /** 创建按钮 */
@@ -222,7 +223,6 @@ function getKeywords() {
 
 /** 来自wf的目录解析 */
 function parseMenu(str) {
-     console.log(str)
     let arr = str.split(/[\r\n]+/);
     let result = [];
     let result_ = [];
@@ -268,12 +268,14 @@ function getMenus() {
     let res = "";
     for (let index = 0; index < mns.length; index++) {
         const element = mns[index];
-        let eleText = $(element).text(),_eleText='';//去掉自带空格的目录，程序统一加空格
+        let eleText = element.innerText,_eleText='';//去掉自带空格的目录，程序统一加空格
       //  if(!/^\s*(\d+\s*\.\s*){2,}\d+\s*/im.test($(element).text())){//剔除三级目录
         eleText = eleText?.replace(/^(\s*\d+(?:\.\d+)?)\s*([^\r\n]+)/img, "$1 $2");//数字和标题之间加空格
+        eleText = eleText?.replace(/(\d) +\. *(\d+)? */img, "$1.$2 ");
       //  }
         res += eleText + "\r\n";
     }
+    console.log(res)
     return parseMenu(res);
 }
 
@@ -424,3 +426,4 @@ function getAuthors() {
 //2023-02-09                           xjd                              2.1.3                           复制数据没解析出来准确，要求注释获取分类号
 //2023-02-16                           xjd                              2.1.4                           复制的知网基金项目内容，去掉最后一个分号；和句号。
 //2023-02-20                           xjd                              2.1.7                           1、修复作者后台邮箱数据带来的影响（多个作者一个单位，最后一个作者没绑定单位），2、目录的数字和标题之间加空格
+//2023-05-06                           xjd                              2.2.1                           去掉二级目录编号与点之间的空格

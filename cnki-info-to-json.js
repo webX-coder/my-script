@@ -3,13 +3,14 @@
 // @namespace   script
 // @match       https://*.cnki.net/*/*/*?*=**
 // @license     MIT
-// @version     2.2.3
+// @version     2.2.8
 // @author      Ade
 // @grant       GM_notification
 // @grant       GM_setClipboard
 // @require     https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/jquery/3.6.0/jquery.min.js
 // @description 把页面上的部分信息抽取成JSON并放入剪切板
-// @downloadURL none
+// @downloadURL https://update.greasyfork.org/scripts/445510/%E7%9F%A5%E7%BD%91%E9%A1%B5%E9%9D%A2%E4%BF%A1%E6%81%AF%E8%BD%ACJSON.user.js
+// @updateURL https://update.greasyfork.org/scripts/445510/%E7%9F%A5%E7%BD%91%E9%A1%B5%E9%9D%A2%E4%BF%A1%E6%81%AF%E8%BD%ACJSON.meta.js
 // ==/UserScript==
 initButton();
 /** 创建按钮 */
@@ -54,6 +55,7 @@ function initButton() {
     $(".cjwk_all_btn_warp button").css({
         "margin-right": "5px",
     });
+    $('#corr-video').remove();//移除标题多余内容
 }
 let items = [];
 let data = {};
@@ -73,13 +75,13 @@ $('.cjwk_btn_zzdw').on("click", function () {
 $('.cjwk_btn_ml').on("click", function () {
     setCatalogueData()
 });
-
+ 
 // begin-------------------新拆分(原基础数据)-------------------
 //复制标题、副标题
 $('.cjwk_btn_all_title').on("click", function () {
     setJichuData(1)
 });
-
+ 
 //复制摘要
 $('.cjwk_btn_all_abstract').on("click", function () {
     setJichuData(2)
@@ -108,10 +110,10 @@ $('.cjwk_btn_all_classNumber').on("click", function () {
 // $('.cjwk_btn_all_special').on("click", function () {
 //     setJichuData()
 // });
-
+ 
 // end-------------------新拆分-------------------
-
-
+ 
+ 
 //----获取全部数据----
 function setAllData() {
     data.data = {};
@@ -126,19 +128,19 @@ function setAllData() {
     data.data.articles.title = _title;
     // 获取作者及单位
     data.data.articlesAuthors = getAuthors();
-
+ 
     // 获取摘要
     data.data.articles.summary = $("#ChDivSummary").text();
-
+ 
     // 获取关键词
     data.data.articles.keywords = getKeywords();
-
+ 
     // 获取基金项目
     data.data.articles.fund = handleStr($(".funds").text()).replace(/[;。]\s*$/g, "");;
-
+ 
     // 获取分类号
     //data.data.clcs = getClc(); //因为复制数据没解析出来准确，要求注释
-
+ 
     // 获取目录
     data.data.menus = getMenus();
     GM_setClipboard(JSON.stringify(data), 'text');
@@ -182,9 +184,9 @@ function setJichuData(type) {
             data.data.clcs = getClc();
     }
     GM_setClipboard(JSON.stringify(data), 'text');
-
+ 
     alert(_alert+'数据获取成功,已复制')
-
+ 
 }
 //----获取目录数据----
 function setCatalogueData() {
@@ -194,7 +196,7 @@ function setCatalogueData() {
     data.data.menus = getMenus();
     GM_setClipboard(JSON.stringify(data), 'text');
     alert('目录获取成功,已复制')
-
+ 
 }
 //----获取作者单位数据----
 function setAuthorsUnitData() {
@@ -204,15 +206,15 @@ function setAuthorsUnitData() {
     data.data.articlesAuthors = getAuthors();
     GM_setClipboard(JSON.stringify(data), 'text');
     alert('作者单位获取成功,已复制')
-
+ 
 }
-
-
+ 
+ 
 /** 删除空格,并替换分号 */
 function handleStr(str) {
     return str.replace(/\s+/mg, "").replace(/；/mg, ";");
 };
-
+ 
 /** 获取关键词 */
 function getKeywords() {
     let keywords = handleStr($(".keywords").text());
@@ -220,7 +222,7 @@ function getKeywords() {
         return keywords.slice(0, keywords.length - 1);
     }
 }
-
+ 
 /** 来自wf的目录解析 */
 function parseMenu(str) {
     let arr = str.split(/[\r\n]+/);
@@ -230,7 +232,7 @@ function parseMenu(str) {
     let name = "";
     let children = [];
     let $level1_key = 0;
-
+ 
     for (let i = 0, len_i = arr.length; i < len_i; i++) {
         let line = arr[i];
         //非空白行才进
@@ -243,7 +245,7 @@ function parseMenu(str) {
                     children: [],
                 };
             }
-
+ 
             //二级菜单
             if (/^\s/.test(line) && result[$level1_key]) {
                 result[$level1_key]["children"].push({
@@ -253,7 +255,7 @@ function parseMenu(str) {
             }
         }
     }
-
+ 
     for (let i = 0, len_i = result.length; i < len_i; i++) {
         if (result[i] !== undefined) {
             result_.push(result[i]);
@@ -261,7 +263,7 @@ function parseMenu(str) {
     }
     return result_;
 }
-
+ 
 /** 获取目录 */
 function getMenus() {
     let mns = $(".catalog-list>li");
@@ -278,7 +280,7 @@ function getMenus() {
     console.log(res)
     return parseMenu(res);
 }
-
+ 
 /** 获取分类号 */
 function getClc() {
     let rows = $(".top-space>.rowtit");
@@ -359,7 +361,7 @@ class Getunits {
     }
 }
 let _data = new Getunits();
-
+ 
 /** 获取作者及单位信息 */
 function getAuthors() {
     // 获取单位信息放入map
@@ -379,8 +381,10 @@ function getAuthors() {
     let authors = [];
     let a = $("#authorpart>span");
     for (let index = 0; index < a.length; index++) {
-        const element = a[index].firstChild;//去掉Email数据带来的影响
-        let eleText = $(element).text();
+        //const element = a[index].firstChild;//去掉Email数据带来的影响
+		const element = a[index];
+        let eleText = element.innerText;//去掉Email数据带来的影响
+        eleText = eleText?eleText.trim():eleText;
         let authorMatch = eleText.match(/^(\D+)([\d,]+)/m);
         if (authorMatch != null) {
             let a1 = authorMatch[1];
@@ -410,11 +414,11 @@ function getAuthors() {
     }
     return authors;
 }
-
+ 
 //-------------------------------------------------------------------------------------更新日志-------------------------------------------------------------------------------------
-
+ 
 // date              |-|               author           |-|             versions          |-|             describe
-
+ 
 //2022-05-31                           xjd                              2.0                             代码基础优化，有待深入优化（添加单个数据源获取）
 //2022-05-31                           xjd                              2.0.1                           修改点击复制弹窗两次bug
 //2022-05-31                           xjd                              2.0.2                           修改更多摘要覆盖基础按钮bug
@@ -428,3 +432,5 @@ function getAuthors() {
 //2023-02-20                           xjd                              2.1.7                           1、修复作者后台邮箱数据带来的影响（多个作者一个单位，最后一个作者没绑定单位），2、目录的数字和标题之间加空格
 //2023-05-06                           xjd                              2.2.1                           去掉二级目录编号与点之间的空格
 //2023-05-09                           xjd                              2.2.3 						     分支测试
+//2023-06-05                           xjd                              2.2.5 						     功能优化
+//2023-07-15                           xjd                              2.2.7 						     功能优化
